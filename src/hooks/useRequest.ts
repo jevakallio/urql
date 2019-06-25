@@ -6,12 +6,13 @@ import { createRequest } from '../utils';
 /** Creates a request from a query and variables but preserves reference equality if the key isn't changing */
 export const useRequest = (
   query: string | DocumentNode,
-  variables?: any
+  variables?: any,
+  fragments?: { string: string | DocumentNode }
 ): GraphQLRequest => {
   const prev = useRef<void | GraphQLRequest>(undefined);
 
   return useMemo(() => {
-    const request = createRequest(query, variables);
+    const request = createRequest(query, variables, fragments);
     // We manually ensure reference equality if the key hasn't changed
     if (prev.current !== undefined && prev.current.key === request.key) {
       return prev.current;
@@ -19,5 +20,5 @@ export const useRequest = (
       prev.current = request;
       return request;
     }
-  }, [query, variables]);
+  }, [query, variables, fragments]);
 };

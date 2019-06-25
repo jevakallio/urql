@@ -18,7 +18,10 @@ export type UseMutationResponse<T, V> = [
 ];
 
 export const useMutation = <T = any, V = object>(
-  query: DocumentNode | string
+  query: DocumentNode | string,
+  fragments?: {
+    string: DocumentNode | string;
+  }
 ): UseMutationResponse<T, V> => {
   const client = useContext(Context);
   const [state, setState] = useImmediateState<UseMutationState<T>>({
@@ -31,7 +34,7 @@ export const useMutation = <T = any, V = object>(
     (variables?: V) => {
       setState({ fetching: true, error: undefined, data: undefined });
 
-      const request = createRequest(query, variables as any);
+      const request = createRequest(query, variables as any, fragments);
 
       return pipe(
         client.executeMutation(request),
@@ -42,7 +45,7 @@ export const useMutation = <T = any, V = object>(
         return result;
       });
     },
-    [client, query, setState]
+    [client, fragments, query, setState]
   );
 
   return [state, executeMutation];

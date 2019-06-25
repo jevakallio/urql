@@ -11,6 +11,9 @@ import { useImmediateState } from './useImmediateState';
 export interface UseQueryArgs<V> {
   query: string | DocumentNode;
   variables?: V;
+  fragments?: {
+    string: string | DocumentNode;
+  };
   requestPolicy?: RequestPolicy;
   pause?: boolean;
 }
@@ -42,7 +45,7 @@ export const useQuery = <T = any, V = object>(
 
   // This creates a request which will keep a stable reference
   // if request.key doesn't change
-  const request = useRequest(args.query, args.variables);
+  const request = useRequest(args.query, args.variables, args.fragments);
 
   const executeQuery = useCallback(
     (opts?: Partial<OperationContext>) => {
